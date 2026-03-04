@@ -26,6 +26,8 @@ It includes GitHub issue and PR templates, a step-by-step dev workflow guide, an
 
 Click **Use this template** on GitHub to create a new repository, or clone and copy the files into an existing project.
 
+> **Configuring an existing repository?** See [`docs/REPO_SETUP_GUIDE.md`](docs/REPO_SETUP_GUIDE.md) — a step-by-step guide with all file contents included, ready to hand to an AI assistant.
+
 ### 2. Open an Issue
 
 Create a new issue using the **Work Order** template for planned features or the **Bug Report** template for defects. Fill in every required field — both templates share the same structure (Goal, Scope, Acceptance Criteria, Test Plan, Rollback Plan, Agents Required) so agents can act on them autonomously.
@@ -54,6 +56,7 @@ Use the pull request template to link the work order, complete the verification 
 | `.github/ISSUE_TEMPLATE/bug-report.yml` | Structured GitHub issue template for bug reports |
 | `.github/pull_request_template.md` | PR template mirroring issue section structure |
 | `docs/DEV_WORKFLOW.md` | Full step-by-step workflow guide |
+| `docs/REPO_SETUP_GUIDE.md` | Agent-ready guide for configuring an existing repo to use this workflow |
 | `docs/WORK_ORDER_TEMPLATE.md` | Manual / offline work order template |
 | `docs/dev-agents/README.md` | Agent index and quick-usage guide |
 | `docs/dev-agents/<ROLE>.md` | Copy-paste prompt for each agent role |
@@ -73,6 +76,7 @@ AIAgentTemplate/
 │   └── pull_request_template.md # PR template mirroring issue section structure
 ├── docs/
 │   ├── DEV_WORKFLOW.md          # Step-by-step workflow guide
+│   ├── REPO_SETUP_GUIDE.md      # Agent-ready guide to configure an existing repo
 │   ├── WORK_ORDER_TEMPLATE.md   # Manual work order template
 │   └── dev-agents/
 │       ├── README.md            # Agent index and quick start
