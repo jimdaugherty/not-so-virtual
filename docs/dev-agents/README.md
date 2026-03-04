@@ -34,7 +34,7 @@ This directory contains copy-paste-ready role prompts for use with GitHub Copilo
 For most work orders, invoke agents in this order:
 
 ```
-Research → Tech Lead → Backend + Frontend (parallel) → Security → DevOps → QA → Documentation
+Research → Tech Lead → Backend → Frontend → DevOps → Security → QA → [QA loop if defects found] → Documentation
 ```
 
 Skip agents that are not relevant to the specific work order.

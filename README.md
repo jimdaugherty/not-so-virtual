@@ -32,11 +32,11 @@ Create a new issue using the **Work Order** template for planned features or the
 
 ### 3. Invoke agents
 
-For each stage of the workflow, open the relevant agent prompt from [`docs/dev-agents/`](docs/dev-agents/README.md), paste it into your AI assistant, and follow up with the work order content.
+When you open an issue or pull request, the **Agent Workflow Orchestration** action automatically posts a step-by-step agent chain checklist as a comment. For each step, open the linked prompt file from [`docs/dev-agents/`](docs/dev-agents/README.md), paste it into your AI assistant, and follow up with the work order content.
 
 Recommended order:
 ```
-Research → Tech Lead → Backend + Frontend → Security → DevOps → QA → Documentation
+Research → Tech Lead → Backend → Frontend → DevOps → Security → QA → [QA loop if defects found] → Documentation
 ```
 
 ### 4. Open a PR
@@ -47,6 +47,8 @@ Use the pull request template to link the work order, complete the verification 
 
 | File / Directory | Purpose |
 |---|---|
+| `.github/workflows/agent-workflow.yml` | Auto-posts agent chain checklist on every new issue or PR |
+| `.github/workflows/qa-retry.yml` | Auto-posts remediation checklist when `qa-failed` label is applied |
 | `.github/ISSUE_TEMPLATE/config.yml` | Issue template chooser configuration |
 | `.github/ISSUE_TEMPLATE/work-order.yml` | Structured GitHub issue template for work orders |
 | `.github/ISSUE_TEMPLATE/bug-report.yml` | Structured GitHub issue template for bug reports |
@@ -61,6 +63,9 @@ Use the pull request template to link the work order, complete the verification 
 ```
 AIAgentTemplate/
 ├── .github/
+│   ├── workflows/
+│   │   ├── agent-workflow.yml   # Auto-posts agent chain checklist on new issues/PRs
+│   │   └── qa-retry.yml         # Auto-posts remediation checklist on qa-failed label
 │   ├── ISSUE_TEMPLATE/
 │   │   ├── config.yml           # Issue template chooser configuration
 │   │   ├── work-order.yml       # Work order issue template

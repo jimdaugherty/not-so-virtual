@@ -22,6 +22,22 @@ Each agent has a dedicated prompt file in [`docs/dev-agents/`](./dev-agents/READ
 
 ---
 
+## Automated Workflow
+
+When any issue or pull request is opened in this repository, the **Agent Workflow Orchestration** GitHub Actions workflow (`.github/workflows/agent-workflow.yml`) fires automatically and posts a step-by-step agent chain checklist as a comment. Work through the checklist in order, invoking each agent using the linked prompt file.
+
+### QA Failure Loop
+
+If the QA Agent finds blocking defects:
+
+1. Document the defects in a comment on the issue.
+2. Apply the **`qa-failed`** label to the issue.
+3. The **QA Retry** workflow (`.github/workflows/qa-retry.yml`) fires automatically and posts a fresh agent chain checklist that includes the QA context.
+4. Work through the remediation pass in order, feeding the QA findings to each agent as additional context.
+5. Once QA passes, remove the `qa-failed` label and proceed to merge.
+
+---
+
 ## Step-by-Step Workflow
 
 ### 1. Create an Issue
@@ -59,7 +75,6 @@ The Tech Lead produces:
 - Clear interface/contract definitions (API shapes, component props, etc.)
 
 ### 4. Implementation
-Run Backend and Frontend agents in parallel where their tasks are independent.
 
 **Backend Agent**
 - Implements the backend sub-tasks defined by Tech Lead
@@ -69,17 +84,17 @@ Run Backend and Frontend agents in parallel where their tasks are independent.
 - Implements UI/UX sub-tasks defined by Tech Lead
 - Consumes API contracts; does not re-design APIs without Tech Lead approval
 
-### 5. Security Review
-After implementation is complete (or for security-sensitive tasks, during implementation):
-- Invoke the **Security Agent** with the diff / PR description
-- Address any findings before merging
-
-### 6. Infrastructure & CI/CD
+### 5. Infrastructure & CI/CD
 Invoke the **DevOps Agent** when changes affect:
 - CI/CD configuration
 - Environment variables or secrets
 - Dependencies or build tooling
 - Deployment or containerisation
+
+### 6. Security Review
+After implementation and infrastructure changes are complete (or for security-sensitive tasks, during implementation):
+- Invoke the **Security Agent** with the diff / PR description
+- Address any findings before proceeding to QA
 
 ### 7. Quality Assurance
 Invoke the **QA Agent** with:
@@ -88,6 +103,12 @@ Invoke the **QA Agent** with:
 
 The QA Agent produces a detailed test plan, executes tests, and reports results.
 All blocking issues must be resolved before merge.
+
+**If QA finds blocking defects:**
+1. Document the defects in a comment on the issue.
+2. Apply the `qa-failed` label — this triggers the QA Retry workflow automatically.
+3. Work through the remediation pass, feeding QA findings as context to each agent.
+4. Re-run QA until all acceptance criteria pass.
 
 ### 8. Documentation
 Invoke the **Documentation Agent** at the end of every work order:
@@ -120,7 +141,7 @@ After all sign-offs and CI passes:
 - Paste the relevant prompt from `docs/dev-agents/` into your LLM / Copilot Chat session.
 - Always supply the current work order content (copy the issue body) as context.
 - For large work orders, break the context into chunks that fit the model's context window.
-- Chain agents in order: Research → Tech Lead → Implementers → Security → QA → Docs.
+- Chain agents in order: Research → Tech Lead → Backend → Frontend → DevOps → Security → QA → Documentation.
 
 ---
 
@@ -128,6 +149,8 @@ After all sign-offs and CI passes:
 
 | File | Purpose |
 |---|---|
+| `.github/workflows/agent-workflow.yml` | Auto-posts agent chain checklist on every new issue or PR |
+| `.github/workflows/qa-retry.yml` | Auto-posts remediation checklist when `qa-failed` label is applied |
 | `.github/ISSUE_TEMPLATE/config.yml` | Issue template chooser configuration |
 | `.github/ISSUE_TEMPLATE/work-order.yml` | Structured work order GitHub issue template |
 | `.github/ISSUE_TEMPLATE/bug-report.yml` | Structured bug report GitHub issue template |
