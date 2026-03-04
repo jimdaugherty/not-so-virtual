@@ -32,6 +32,8 @@ Click **Use this template** on GitHub to create a new repository, or clone and c
 
 Create a new issue using the **Work Order** template for planned features or the **Bug Report** template for defects. Fill in every required field — both templates share the same structure (Goal, Scope, Acceptance Criteria, Test Plan, Rollback Plan, Agents Required) so agents can act on them autonomously.
 
+> **Need a reference?** See [`docs/EXAMPLE_ISSUE.md`](docs/EXAMPLE_ISSUE.md) for a fully filled-in Work Order example.
+
 ### 3. Invoke agents
 
 When you open an issue or pull request, the **Agent Workflow Orchestration** action automatically posts a step-by-step agent chain checklist as a comment. For each step, open the linked prompt file from [`docs/dev-agents/`](docs/dev-agents/README.md), paste it into your AI assistant, and follow up with the work order content.
@@ -44,6 +46,8 @@ Research → Tech Lead → Backend → Frontend → DevOps → Security → QA �
 ### 4. Open a PR
 
 Use the pull request template to link the work order, complete the verification checklist, and collect agent sign-offs before merging.
+
+> **Need a reference?** See [`docs/EXAMPLE_PR.md`](docs/EXAMPLE_PR.md) for a fully filled-in PR example.
 
 ## File Reference
 
@@ -58,6 +62,8 @@ Use the pull request template to link the work order, complete the verification 
 | `docs/DEV_WORKFLOW.md` | Full step-by-step workflow guide |
 | `docs/REPO_SETUP_GUIDE.md` | Agent-ready guide for configuring an existing repo to use this workflow |
 | `docs/WORK_ORDER_TEMPLATE.md` | Manual / offline work order template |
+| `docs/EXAMPLE_ISSUE.md` | Fully filled-in example Work Order issue (reference for writing your own) |
+| `docs/EXAMPLE_PR.md` | Fully filled-in example pull request (reference for writing your own) |
 | `docs/dev-agents/README.md` | Agent index and quick-usage guide |
 | `docs/dev-agents/<ROLE>.md` | Copy-paste prompt for each agent role |
 
@@ -78,6 +84,8 @@ AIAgentTemplate/
 │   ├── DEV_WORKFLOW.md          # Step-by-step workflow guide
 │   ├── REPO_SETUP_GUIDE.md      # Agent-ready guide to configure an existing repo
 │   ├── WORK_ORDER_TEMPLATE.md   # Manual work order template
+│   ├── EXAMPLE_ISSUE.md         # Filled-in example Work Order issue
+│   ├── EXAMPLE_PR.md            # Filled-in example pull request
 │   └── dev-agents/
 │       ├── README.md            # Agent index and quick start
 │       ├── DOCUMENTATION.md     # Documentation Agent prompt
