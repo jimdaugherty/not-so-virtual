@@ -66,6 +66,7 @@ Use the pull request template to link the work order, complete the verification 
 | `docs/EXAMPLE_PR.md` | Fully filled-in example pull request (reference for writing your own) |
 | `docs/dev-agents/README.md` | Agent index and quick-usage guide |
 | `docs/dev-agents/<ROLE>.md` | Copy-paste prompt for each agent role |
+| `learning-data/` | Reference documents agents can consult for domain knowledge and project context |
 
 ## Project Structure
 
@@ -96,6 +97,8 @@ AIAgentTemplate/
 │       ├── SECURITY.md          # Security Agent prompt
 │       ├── DEVOPS.md            # DevOps Agent prompt
 │       └── QA.md                # QA Agent prompt
+├── learning-data/
+│   └── README.md                # Guidance on storing agent reference documents
 └── README.md
 ```
 
