@@ -24,15 +24,22 @@ Each agent has a dedicated prompt file in [`docs/dev-agents/`](./dev-agents/READ
 
 ## Step-by-Step Workflow
 
-### 1. Create a Work Order
-Open a GitHub issue using the **Work Order** template (`.github/ISSUE_TEMPLATE/work-order.yml`).
-Fill in every section:
-- **Goal** — what the work order achieves
-- **Research & Context** — findings, links, prior art
+### 1. Create an Issue
+
+Open a GitHub issue using the appropriate template:
+
+- **Work Order** (`.github/ISSUE_TEMPLATE/work-order.yml`) — for new features, tasks, or planned changes.
+- **Bug Report** (`.github/ISSUE_TEMPLATE/bug-report.yml`) — for defects and unexpected behaviour.
+
+Both templates share a common structure so agents can act on them uniformly:
+- **Goal** — what the issue achieves or what problem it solves
+- **Project Context** — environment, stack, and constraints
 - **Scope** — explicit in/out-of-scope list
 - **Acceptance Criteria** — testable conditions for done
 - **Test Plan** — testing strategy
 - **Rollback Plan** — how to safely revert
+- **Priority** — Critical / High / Medium / Low
+- **Agents Required** — which agent roles must act
 
 ### 2. Research (optional but recommended)
 If the work order requires investigation, invoke the **Research Agent** first.
@@ -91,9 +98,14 @@ Invoke the **Documentation Agent** at the end of every work order:
 
 ### 9. Pull Request
 Open a PR using the pull request template (`.github/pull_request_template.md`):
-- Link the work order issue
-- Complete every checklist item
-- Collect agent sign-offs
+- Link the issue
+- Restate the **Goal** and **Summary of Changes**
+- Confirm **Scope** (in/out)
+- Mark off each **Acceptance Criterion**
+- Record **Test Plan** results
+- Confirm the **Rollback Plan** is still valid
+- Complete the Verification Checklist
+- Collect **Agent Sign-offs** (matching the Agents Required from the issue)
 
 ### 10. Merge & Close
 After all sign-offs and CI passes:
@@ -116,8 +128,10 @@ After all sign-offs and CI passes:
 
 | File | Purpose |
 |---|---|
+| `.github/ISSUE_TEMPLATE/config.yml` | Issue template chooser configuration |
 | `.github/ISSUE_TEMPLATE/work-order.yml` | Structured work order GitHub issue template |
-| `.github/pull_request_template.md` | PR checklist linking work order and agent sign-offs |
+| `.github/ISSUE_TEMPLATE/bug-report.yml` | Structured bug report GitHub issue template |
+| `.github/pull_request_template.md` | PR template mirroring issue section structure |
 | `docs/DEV_WORKFLOW.md` | This document — overall workflow guide |
 | `docs/WORK_ORDER_TEMPLATE.md` | Manual / offline work order template |
 | `docs/dev-agents/README.md` | Agent index and quick-start guide |
