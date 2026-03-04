@@ -26,9 +26,9 @@ It includes GitHub issue and PR templates, a step-by-step dev workflow guide, an
 
 Click **Use this template** on GitHub to create a new repository, or clone and copy the files into an existing project.
 
-### 2. Open a Work Order
+### 2. Open an Issue
 
-Create a new issue using the **Work Order** template. Fill in the goal, scope, acceptance criteria, and test plan. The template guides you through every required field.
+Create a new issue using the **Work Order** template for planned features or the **Bug Report** template for defects. Fill in every required field — both templates share the same structure (Goal, Scope, Acceptance Criteria, Test Plan, Rollback Plan, Agents Required) so agents can act on them autonomously.
 
 ### 3. Invoke agents
 
@@ -47,8 +47,10 @@ Use the pull request template to link the work order, complete the verification 
 
 | File / Directory | Purpose |
 |---|---|
+| `.github/ISSUE_TEMPLATE/config.yml` | Issue template chooser configuration |
 | `.github/ISSUE_TEMPLATE/work-order.yml` | Structured GitHub issue template for work orders |
-| `.github/pull_request_template.md` | PR checklist with work order link and agent sign-offs |
+| `.github/ISSUE_TEMPLATE/bug-report.yml` | Structured GitHub issue template for bug reports |
+| `.github/pull_request_template.md` | PR template mirroring issue section structure |
 | `docs/DEV_WORKFLOW.md` | Full step-by-step workflow guide |
 | `docs/WORK_ORDER_TEMPLATE.md` | Manual / offline work order template |
 | `docs/dev-agents/README.md` | Agent index and quick-usage guide |
@@ -60,8 +62,10 @@ Use the pull request template to link the work order, complete the verification 
 AIAgentTemplate/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
-│   │   └── work-order.yml       # Work order issue template
-│   └── pull_request_template.md # PR checklist template
+│   │   ├── config.yml           # Issue template chooser configuration
+│   │   ├── work-order.yml       # Work order issue template
+│   │   └── bug-report.yml       # Bug report issue template
+│   └── pull_request_template.md # PR template mirroring issue section structure
 ├── docs/
 │   ├── DEV_WORKFLOW.md          # Step-by-step workflow guide
 │   ├── WORK_ORDER_TEMPLATE.md   # Manual work order template

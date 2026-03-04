@@ -1,13 +1,59 @@
-## Work Order
+## Linked Issue
 
-<!-- Link to the work order issue this PR addresses -->
+<!-- Link to the work order or bug report this PR addresses -->
 Closes #
+
+---
+
+## Goal
+
+<!-- Restate the goal from the linked issue in one sentence -->
 
 ---
 
 ## Summary of Changes
 
-<!-- Brief description of what was changed and why -->
+<!-- Brief description of what was changed and why, scoped to the issue's Goal -->
+
+---
+
+## Scope
+
+<!-- Confirm what IS and IS NOT addressed by this PR -->
+
+**In scope:**
+- [ ] <!-- change 1 -->
+
+**Out of scope:**
+- <!-- anything explicitly excluded -->
+
+---
+
+## Acceptance Criteria
+
+<!-- Copy each AC from the linked issue and mark it complete -->
+
+- [ ] <!-- AC1 -->
+- [ ] <!-- AC2 -->
+
+---
+
+## Test Plan
+
+<!-- Summarise how changes were tested, matching the Test Plan from the linked issue -->
+
+| Level | Result |
+|---|---|
+| Unit | <!-- pass / fail / N/A --> |
+| Integration | <!-- pass / fail / N/A --> |
+| E2E | <!-- pass / fail / N/A --> |
+| Security | <!-- pass / fail / N/A --> |
+
+---
+
+## Rollback Plan
+
+<!-- Confirm the rollback plan from the linked issue is still valid, or describe any changes -->
 
 ---
 
@@ -18,56 +64,37 @@ Closes #
 - [ ] All new code is covered by tests
 - [ ] Existing tests pass
 
-### Scope Adherence
-- [ ] Changes are limited to what is defined in the linked work order
-- [ ] Nothing out-of-scope was modified without a separate issue/approval
-
-### Acceptance Criteria
-- [ ] All acceptance criteria from the work order are met (reference them below)
-
-<!-- List each acceptance criterion and mark it done:
-- [ ] AC1: ...
-- [ ] AC2: ...
--->
-
 ### Security
 - [ ] No secrets, credentials, or PII are committed
 - [ ] Input validation and output encoding are in place where required
 - [ ] RBAC / permission checks are applied to new endpoints or actions
-- [ ] Security Agent review completed (if required by work order)
-
-### Testing
-- [ ] Unit tests added / updated
-- [ ] Integration tests added / updated (if applicable)
-- [ ] E2E tests added / updated (if applicable)
-- [ ] QA Agent test plan executed and results attached
+- [ ] Security Agent review completed (if required by issue)
 
 ### Documentation
 - [ ] README updated (if setup, usage, or configuration changed)
 - [ ] Inline code comments added for non-obvious logic
 - [ ] API docs / OpenAPI spec updated (if applicable)
 - [ ] `docs/` files updated (if workflow, architecture, or decisions changed)
-- [ ] Wiki updated (if applicable)
-- [ ] Documentation Agent review completed (if required by work order)
+- [ ] Documentation Agent review completed (if required by issue)
 
 ### DevOps / Infra
 - [ ] CI/CD pipeline passes
 - [ ] Environment variables / secrets documented (not committed)
 - [ ] Migration scripts included and tested (if applicable)
-- [ ] Rollback plan from work order is still valid for these changes
 
 ---
 
 ## Agent Sign-offs
 
 <!-- Check off each agent that has reviewed / completed their portion -->
-- [ ] Tech Lead — plan followed, scope respected
-- [ ] Backend — implementation complete
-- [ ] Frontend — implementation complete
-- [ ] Security — security review passed
-- [ ] DevOps — pipeline and infra verified
-- [ ] QA — test plan executed, no blocking issues
-- [ ] Documentation — docs and README updated
+- [ ] Research Agent — findings incorporated
+- [ ] Tech Lead Agent — plan followed, scope respected
+- [ ] Backend Agent — implementation complete
+- [ ] Frontend Agent — implementation complete
+- [ ] Security Agent — security review passed
+- [ ] DevOps Agent — pipeline and infra verified
+- [ ] QA Agent — test plan executed, no blocking issues
+- [ ] Documentation Agent — docs and README updated
 
 ---
 
