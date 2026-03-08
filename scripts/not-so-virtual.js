@@ -460,7 +460,7 @@ class NotSoVirtualApp extends Application {
         speaker: ChatMessage.getSpeaker(),
         content,
       }).catch(() => null);
-      if (!msg) await ui.chat?.processMessage(content).catch(console.warn);
+      if (!msg) await ui.chat?.processMessage(content).catch((err) => console.warn("Not So Virtual |", err));
     } else {
       await ChatMessage.implementation.create({
         user: game.user.id,
@@ -513,7 +513,7 @@ class NotSoVirtualApp extends Application {
 let nsvApp = null;
 
 Hooks.once("init", () => {
-  console.log(`${MODULE_ID} | Initializing`);
+  console.log("Not So Virtual | Initializing");
 
   game.settings.register(MODULE_ID, "autoActivate", {
     name: "NSV.Settings.AutoActivate.Name",
