@@ -7,13 +7,14 @@
  *   • Chat (send & receive)
  *   • Journal browser
  *
- * Canvas is optionally disabled via CONFIG.Canvas.disabled in the init hook
- * so the server never wastes bandwidth streaming map tiles to mobile clients.
+ * This module intentionally only activates on mobile/tablet devices.
+ * Canvas is disabled via CONFIG.Canvas.disabled for performance.
  */
 
 const MODULE_ID = "not-so-virtual";
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Utility ──────────────────────────────────────────────────────────────────
 
 function isMobileDevice() {
   return (
@@ -32,29 +33,32 @@ function clamp(v, min, max) {
   return Math.min(Math.max(v, min), max);
 }
 
-// ─── Main Application ─────────────────────────────────────────────────────────
+// ─── Main Application (ApplicationV2) ─────────────────────────────────────────
 
-class NotSoVirtualApp extends Application {
-  constructor(...args) {
-    super(...args);
-    this._activeTab = "character";
-    this._journalId = null; // currently open journal
-  }
+class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id: "not-so-virtual-app",
-      title: "Not So Virtual",
+  static DEFAULT_OPTIONS = {
+    id: "not-so-virtual-app",
+    classes: ["not-so-virtual"],
+    window: {
+      frame: false,
+      positioned: false,
+    },
+  };
+
+  static PARTS = {
+    app: {
       template: `modules/${MODULE_ID}/templates/nsv-app.hbs`,
-      classes: ["not-so-virtual"],
-      popOut: false,
-      resizable: false,
-    });
-  }
+      scrollable: [".nsv-tab-panel", ".nsv-chat-log"],
+    },
+  };
 
-  // ─── Data ────────────────────────────────────────────────────────────────────
+  _activeTab = "character";
+  _journalId = null;
 
-  getData() {
+  // ─── Context ─────────────────────────────────────────────────────────────────
+
+  async _prepareContext(options) {
     const actor = game.user?.character ?? null;
     const systemId = game.system?.id ?? "";
 
@@ -99,7 +103,7 @@ class NotSoVirtualApp extends Application {
       sys.ac?.value ??
       null;
 
-    // ── Initiative / Speed / Prof ───────────────────────────────────────────
+    // ── Initiative / Speed / Prof ────────────────────────────────────────────
     const initiative =
       sys.attributes?.init?.total ??
       sys.attributes?.init?.value ??
@@ -109,10 +113,7 @@ class NotSoVirtualApp extends Application {
       sys.attributes?.speed?.value ??
       sys.attributes?.speed ??
       null;
-    const profBonus =
-      sys.attributes?.prof ??
-      sys.prof ??
-      null;
+    const profBonus = sys.attributes?.prof ?? sys.prof ?? null;
 
     // ── Abilities ───────────────────────────────────────────────────────────
     let abilities = null;
@@ -120,11 +121,12 @@ class NotSoVirtualApp extends Application {
       abilities = Object.entries(sys.abilities).map(([key, val]) => {
         const score = val.value ?? 10;
         const mod = val.mod ?? Math.floor((score - 10) / 2);
-        const saveTotal = val.saveBonus !== undefined
-          ? signedNum(mod + (val.saveBonus ?? 0))
-          : val.save !== undefined
-          ? signedNum(val.save.value ?? mod)
-          : null;
+        const saveTotal =
+          val.saveBonus !== undefined
+            ? signedNum(mod + (val.saveBonus ?? 0))
+            : val.save !== undefined
+            ? signedNum(val.save.value ?? mod)
+            : null;
         return {
           key,
           label: key.toUpperCase().slice(0, 3),
@@ -143,8 +145,9 @@ class NotSoVirtualApp extends Application {
         .map(([key, val]) => ({
           key,
           label:
-            game.i18n.localize(`DND5E.Skill${key.charAt(0).toUpperCase() + key.slice(1)}`) ||
-            key,
+            game.i18n.localize(
+              `DND5E.Skill${key.charAt(0).toUpperCase() + key.slice(1)}`
+            ) || key,
           total: signedNum(val.total ?? val.value ?? 0),
           passive: val.passive ?? 0,
           proficient: (val.value ?? 0) >= 1,
@@ -152,7 +155,7 @@ class NotSoVirtualApp extends Application {
         .sort((a, b) => a.label.localeCompare(b.label));
     }
 
-    // ── Spell slots ─────────────────────────────────────────────────────────
+    // ── Spell slots ──────────────────────────────────────────────────────────
     let spellSlots = null;
     if (sys.spells) {
       spellSlots = Object.entries(sys.spells)
@@ -212,7 +215,11 @@ class NotSoVirtualApp extends Application {
       const rawHp = t.actor?.system?.attributes?.hp ?? null;
       let hp = null;
       if (rawHp) {
-        const pct = clamp(Math.round((rawHp.value / (rawHp.max || 1)) * 100), 0, 100);
+        const pct = clamp(
+          Math.round((rawHp.value / (rawHp.max || 1)) * 100),
+          0,
+          100
+        );
         hp = { value: rawHp.value, max: rawHp.max, percent: pct };
       }
       return {
@@ -228,7 +235,7 @@ class NotSoVirtualApp extends Application {
       };
     });
 
-    const myCombatant = combat.getCombatantsByActor?.(
+    const myCombatant = game.combat.getCombatantsByActor?.(
       game.user?.character?.id ?? ""
     )?.[0];
 
@@ -269,10 +276,9 @@ class NotSoVirtualApp extends Application {
     const journal = game.journal?.get(this._journalId);
     if (!journal) return null;
 
-    const pages = journal.pages?.contents ?? [];
     return {
       name: journal.name,
-      pages: pages.map((p) => ({
+      pages: (journal.pages?.contents ?? []).map((p) => ({
         id: p.id,
         name: p.name,
         content: p.text?.content ?? "",
@@ -280,15 +286,11 @@ class NotSoVirtualApp extends Application {
     };
   }
 
-  // ─── Rendering ───────────────────────────────────────────────────────────────
+  // ─── Listeners ───────────────────────────────────────────────────────────────
 
-  async _renderInner(data) {
-    const html = await super._renderInner(data);
-    return html;
-  }
-
-  activateListeners(html) {
-    super.activateListeners(html);
+  _onRender(context, options) {
+    super._onRender(context, options);
+    const html = $(this.element);
 
     // ── Collapsible sections ─────────────────────────────────────────────────
     html.find(".nsv-toggle").on("click", (e) => {
@@ -299,13 +301,13 @@ class NotSoVirtualApp extends Application {
       body.classList.toggle("nsv-hidden");
     });
 
-    // ── Tab nav ─────────────────────────────────────────────────────────────
+    // ── Tab nav ──────────────────────────────────────────────────────────────
     html.find(".nsv-nav-btn").on("click", (e) => {
       const tab = e.currentTarget.dataset.tab;
       this._switchTab(tab, html);
     });
 
-    // ── HP edit ─────────────────────────────────────────────────────────────
+    // ── HP edit ──────────────────────────────────────────────────────────────
     html.find(".nsv-hp-value").on("change", async (e) => {
       const actor = game.user?.character;
       if (!actor) return;
@@ -317,22 +319,19 @@ class NotSoVirtualApp extends Application {
     html.find("[data-action='roll-ability']").on("click", async (e) => {
       const actor = game.user?.character;
       if (!actor) return;
-      const ability = e.currentTarget.dataset.ability;
-      await actor.rollAbilityTest(ability, { event: e });
+      await actor.rollAbilityTest(e.currentTarget.dataset.ability, { event: e });
     });
 
     html.find("[data-action='roll-save']").on("click", async (e) => {
       const actor = game.user?.character;
       if (!actor) return;
-      const ability = e.currentTarget.dataset.ability;
-      await actor.rollSavingThrow(ability, { event: e });
+      await actor.rollSavingThrow(e.currentTarget.dataset.ability, { event: e });
     });
 
     html.find("[data-action='roll-skill']").on("click", async (e) => {
       const actor = game.user?.character;
       if (!actor) return;
-      const skill = e.currentTarget.dataset.skill;
-      await actor.rollSkill(skill, { event: e });
+      await actor.rollSkill(e.currentTarget.dataset.skill, { event: e });
     });
 
     // ── Item actions ─────────────────────────────────────────────────────────
@@ -354,8 +353,7 @@ class NotSoVirtualApp extends Application {
     });
 
     html.find("[data-action='item-expand']").on("click", (e) => {
-      const row = e.currentTarget.closest(".nsv-item-row");
-      row?.classList.toggle("expanded");
+      e.currentTarget.closest(".nsv-item-row")?.classList.toggle("expanded");
     });
 
     // ── Spell slots ──────────────────────────────────────────────────────────
@@ -364,7 +362,8 @@ class NotSoVirtualApp extends Application {
       if (!actor) return;
       const level = e.currentTarget.dataset.level;
       const cur = actor.system.spells?.[level]?.value ?? 0;
-      if (cur > 0) await actor.update({ [`system.spells.${level}.value`]: cur - 1 });
+      if (cur > 0)
+        await actor.update({ [`system.spells.${level}.value`]: cur - 1 });
     });
 
     html.find("[data-action='slot-restore']").on("click", async (e) => {
@@ -373,7 +372,8 @@ class NotSoVirtualApp extends Application {
       const level = e.currentTarget.dataset.level;
       const cur = actor.system.spells?.[level]?.value ?? 0;
       const max = actor.system.spells?.[level]?.max ?? 0;
-      if (cur < max) await actor.update({ [`system.spells.${level}.value`]: cur + 1 });
+      if (cur < max)
+        await actor.update({ [`system.spells.${level}.value`]: cur + 1 });
     });
 
     // ── Combat ───────────────────────────────────────────────────────────────
@@ -396,8 +396,8 @@ class NotSoVirtualApp extends Application {
 
     html.find("[data-action='end-combat']").on("click", async () => {
       if (!game.user?.isGM) return;
-      const confirmed = await Dialog.confirm({
-        title: "End Combat",
+      const confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: { title: "End Combat" },
         content: "<p>End the current combat encounter?</p>",
       });
       if (confirmed) await game.combat?.endCombat();
@@ -417,22 +417,21 @@ class NotSoVirtualApp extends Application {
       }
     });
 
-    // Scroll chat to bottom on open
+    // Scroll chat to bottom on render
     const chatLog = html.find(".nsv-chat-log")[0];
     if (chatLog) chatLog.scrollTop = chatLog.scrollHeight;
 
     // ── Journal ──────────────────────────────────────────────────────────────
     html.find(".nsv-journal-item").on("click", async (e) => {
-      const journalId = e.currentTarget.dataset.journalId;
-      this._journalId = journalId;
-      await this.render(false);
-      this._switchTab("journal", this.element);
+      this._journalId = e.currentTarget.dataset.journalId;
+      await this.render();
+      this._switchTab("journal", $(this.element));
     });
 
     html.find("[data-action='journal-back']").on("click", async () => {
       this._journalId = null;
-      await this.render(false);
-      this._switchTab("journal", this.element);
+      await this.render();
+      this._switchTab("journal", $(this.element));
     });
   }
 
@@ -454,57 +453,61 @@ class NotSoVirtualApp extends Application {
     if (!content) return;
 
     if (content.startsWith("/")) {
-      // Delegate slash commands to FoundryVTT's command parser
-      const msg = await ChatMessage.implementation.create({
+      const msg = await ChatMessage.create({
         user: game.user.id,
         speaker: ChatMessage.getSpeaker(),
         content,
       }).catch(() => null);
-      if (!msg) await ui.chat?.processMessage(content).catch((err) => console.warn("Not So Virtual |", err));
+      if (!msg)
+        await ui.chat
+          ?.processMessage(content)
+          .catch((err) => console.warn("Not So Virtual |", err));
     } else {
-      await ChatMessage.implementation.create({
+      await ChatMessage.create({
         user: game.user.id,
         speaker: ChatMessage.getSpeaker(),
         content,
-        type: CONST.CHAT_MESSAGE_STYLES?.OOC ?? 0,
+        style: CONST.CHAT_MESSAGE_STYLES?.OOC ?? 0,
       });
     }
 
     if (input) input.value = "";
   }
 
-  // ─── Targeted refresh helpers (avoid full re-render when possible) ──────────
+  // ─── Targeted refresh helpers ─────────────────────────────────────────────
 
   refreshChat() {
     if (!this.rendered) return;
     const messages = this._buildChatData();
-    const chatLog = this.element?.find(".nsv-chat-log");
-    if (!chatLog?.length) return;
+    const chatLog = $(this.element).find(".nsv-chat-log");
+    if (!chatLog.length) return;
 
-    const html = messages
-      .map(
-        (m) => `
-      <div class="nsv-message${m.isRoll ? " nsv-roll" : ""}${m.whisper ? " nsv-whisper" : ""}">
-        <div class="nsv-message-meta">
-          <span class="nsv-message-speaker">${foundry.utils.escapeHTML(m.speaker)}</span>
-          <span class="nsv-message-time">${m.timestamp}</span>
-        </div>
-        ${m.flavor ? `<div class="nsv-message-flavor">${m.flavor}</div>` : ""}
-        <div class="nsv-message-content">${m.content}</div>
-      </div>`
-      )
-      .join("");
+    chatLog.html(
+      messages
+        .map(
+          (m) => `
+        <div class="nsv-message${m.isRoll ? " nsv-roll" : ""}${m.whisper ? " nsv-whisper" : ""}">
+          <div class="nsv-message-meta">
+            <span class="nsv-message-speaker">${foundry.utils.escapeHTML(m.speaker)}</span>
+            <span class="nsv-message-time">${m.timestamp}</span>
+            ${m.whisper ? `<span class="nsv-whisper-badge">whisper</span>` : ""}
+          </div>
+          ${m.flavor ? `<div class="nsv-message-flavor">${m.flavor}</div>` : ""}
+          <div class="nsv-message-content">${m.content}</div>
+        </div>`
+        )
+        .join("")
+    );
 
-    chatLog.html(html);
     chatLog[0].scrollTop = chatLog[0].scrollHeight;
   }
 
   refreshCombat() {
-    if (this.rendered && this._activeTab === "combat") this.render(false);
+    if (this.rendered && this._activeTab === "combat") this.render();
   }
 
   refreshCharacter() {
-    if (this.rendered && this._activeTab === "character") this.render(false);
+    if (this.rendered && this._activeTab === "character") this.render();
   }
 }
 
@@ -515,23 +518,13 @@ let nsvApp = null;
 Hooks.once("init", () => {
   console.log("Not So Virtual | Initializing");
 
-  game.settings.register(MODULE_ID, "autoActivate", {
-    name: "NSV.Settings.AutoActivate.Name",
-    hint: "NSV.Settings.AutoActivate.Hint",
-    scope: "client",
-    config: true,
-    type: Boolean,
-    default: true,
-    onChange: () => window.location.reload(),
-  });
-
   game.settings.register(MODULE_ID, "disableCanvas", {
     name: "NSV.Settings.DisableCanvas.Name",
     hint: "NSV.Settings.DisableCanvas.Hint",
     scope: "client",
     config: true,
     type: Boolean,
-    default: false,
+    default: true,
     onChange: () => window.location.reload(),
   });
 
@@ -544,64 +537,44 @@ Hooks.once("init", () => {
     return new Handlebars.SafeString(out);
   });
 
-  // Equality helper for tab active-class logic
-  Handlebars.registerHelper("eq", (a, b, options) => {
+  Handlebars.registerHelper("eq", function (a, b, options) {
     return a === b ? options.fn(this) : options.inverse(this);
   });
 
-  // Greater-than helper used in combat HP bar
-  Handlebars.registerHelper("gt", (a, b, options) => {
+  Handlebars.registerHelper("gt", function (a, b, options) {
     return a > b ? options.fn(this) : options.inverse(this);
   });
 
-  loadTemplates([`modules/${MODULE_ID}/templates/nsv-app.hbs`]);
+  // Only disable the canvas on mobile devices
+  if (!isMobileDevice()) return;
 
-  // Disable canvas if setting is on, or auto-detect mobile + setting allows
   const disableCanvas = (() => {
     try {
       return game.settings.get(MODULE_ID, "disableCanvas");
-    } catch {
-      return false;
-    }
-  })();
-  const autoActivate = (() => {
-    try {
-      return game.settings.get(MODULE_ID, "autoActivate");
     } catch {
       return true;
     }
   })();
 
-  if (disableCanvas || (autoActivate && isMobileDevice())) {
+  if (disableCanvas) {
     CONFIG.Canvas.disabled = true;
+    console.log("Not So Virtual | Canvas disabled for mobile client");
   }
 });
 
 Hooks.once("ready", () => {
-  const autoActivate = game.settings.get(MODULE_ID, "autoActivate");
-
-  if (autoActivate && isMobileDevice()) {
-    nsvApp = new NotSoVirtualApp();
-    nsvApp.render(true);
+  if (!isMobileDevice()) {
+    console.log("Not So Virtual | Non-mobile device detected — module inactive");
+    return;
   }
-});
 
-// Sidebar button so desktop users can test the mobile UI
-Hooks.on("renderSidebar", (_sidebar, html) => {
-  const btn = $(`<button class="nsv-sidebar-btn" title="${game.i18n.localize("NSV.OpenMobileUI")}">
-    <i class="fas fa-mobile-alt"></i>
-  </button>`);
-
-  btn.on("click", () => {
-    if (!nsvApp) nsvApp = new NotSoVirtualApp();
-    if (nsvApp.rendered) nsvApp.close();
-    else nsvApp.render(true);
-  });
-
-  html.find(".sidebar-header").append(btn);
+  console.log("Not So Virtual | Mobile device detected — launching UI");
+  nsvApp = new NotSoVirtualApp();
+  nsvApp.render(true);
 });
 
 // ─── Live-update hooks ────────────────────────────────────────────────────────
+// These only fire when nsvApp exists (i.e. on mobile), so no guard needed.
 
 Hooks.on("createChatMessage", () => nsvApp?.refreshChat());
 Hooks.on("updateActor", (actor) => {
