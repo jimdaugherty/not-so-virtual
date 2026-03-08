@@ -339,17 +339,21 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
       const actor = game.user?.character;
       if (!actor) return;
       const itemId = e.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+      if (!itemId) return;
       const item = actor.items.get(itemId);
-      if (item?.rollAttack) await item.rollAttack({ event: e });
-      else if (item?.use) await item.use({}, { event: e });
+      if (!item) return;
+      if (item.rollAttack) await item.rollAttack({ event: e });
+      else if (item.use) await item.use({ event: e });
     });
 
     html.find("[data-action='use-item']").on("click", async (e) => {
       const actor = game.user?.character;
       if (!actor) return;
       const itemId = e.currentTarget.closest("[data-item-id]")?.dataset.itemId;
+      if (!itemId) return;
       const item = actor.items.get(itemId);
-      if (item?.use) await item.use({}, { event: e });
+      if (!item) return;
+      if (item.use) await item.use({ event: e });
     });
 
     html.find("[data-action='item-expand']").on("click", (e) => {
