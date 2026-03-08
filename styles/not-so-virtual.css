@@ -1,0 +1,1042 @@
+/* ============================================================
+   Not So Virtual — Mobile UI for FoundryVTT
+   Dark theme, mobile-first, touch-friendly
+   ============================================================ */
+
+/* ── Variables ───────────────────────────────────────────── */
+.not-so-virtual {
+  --nsv-bg:         #1a1a2e;
+  --nsv-bg2:        #16213e;
+  --nsv-bg3:        #0f3460;
+  --nsv-surface:    #1e1e30;
+  --nsv-border:     #2e2e4e;
+  --nsv-text:       #e0e0f0;
+  --nsv-muted:      #8888aa;
+  --nsv-accent:     #7c4dff;
+  --nsv-accent2:    #5c6bc0;
+  --nsv-green:      #4caf50;
+  --nsv-yellow:     #ffc107;
+  --nsv-red:        #f44336;
+  --nsv-gold:       #ffb300;
+  --nsv-header-h:   48px;
+  --nsv-nav-h:      64px;
+  --nsv-radius:     8px;
+  --nsv-touch:      44px;
+  --nsv-font:       "Signika", "Palatino Linotype", serif;
+}
+
+/* ── App Shell ───────────────────────────────────────────── */
+#nsv-app.not-so-virtual {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  background: var(--nsv-bg);
+  color: var(--nsv-text);
+  font-family: var(--nsv-font);
+  font-size: 14px;
+  line-height: 1.4;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.nsv-header {
+  height: var(--nsv-header-h);
+  min-height: var(--nsv-header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background: var(--nsv-bg2);
+  border-bottom: 1px solid var(--nsv-border);
+  flex-shrink: 0;
+}
+
+.nsv-logo {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nsv-accent);
+  letter-spacing: 0.5px;
+}
+
+.nsv-player-name {
+  color: var(--nsv-muted);
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 50%;
+}
+
+/* ── Content area ────────────────────────────────────────── */
+.nsv-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.nsv-tab-panel {
+  display: none;
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 12px calc(var(--nsv-nav-h) + 12px);
+  -webkit-overflow-scrolling: touch;
+}
+
+.nsv-tab-panel.nsv-active {
+  display: block;
+}
+
+/* ── Bottom navigation ───────────────────────────────────── */
+.nsv-nav {
+  height: var(--nsv-nav-h);
+  min-height: var(--nsv-nav-h);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--nsv-bg2);
+  border-top: 1px solid var(--nsv-border);
+  flex-shrink: 0;
+}
+
+.nsv-nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: var(--nsv-muted);
+  cursor: pointer;
+  padding: 6px 4px;
+  font-size: 10px;
+  font-family: var(--nsv-font);
+  transition: color 0.15s, background 0.15s;
+  min-height: var(--nsv-touch);
+}
+
+.nsv-nav-btn i {
+  font-size: 20px;
+}
+
+.nsv-nav-btn.nsv-active {
+  color: var(--nsv-accent);
+}
+
+.nsv-nav-btn:hover {
+  background: rgba(124, 77, 255, 0.1);
+  color: var(--nsv-text);
+}
+
+/* ── Sections ────────────────────────────────────────────── */
+.nsv-section {
+  margin-bottom: 16px;
+  background: var(--nsv-surface);
+  border: 1px solid var(--nsv-border);
+  border-radius: var(--nsv-radius);
+  overflow: hidden;
+}
+
+.nsv-section-title {
+  margin: 0;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--nsv-muted);
+  background: var(--nsv-bg2);
+  border-bottom: 1px solid var(--nsv-border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.nsv-section-body {
+  padding: 8px;
+}
+
+.nsv-section-body.nsv-hidden {
+  display: none;
+}
+
+/* ── Vitals ──────────────────────────────────────────────── */
+.nsv-vitals {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--nsv-surface);
+  border: 1px solid var(--nsv-border);
+  border-radius: var(--nsv-radius);
+}
+
+.nsv-actor-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 2px solid var(--nsv-border);
+  flex-shrink: 0;
+}
+
+.nsv-vitals-stats {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.nsv-stat-block label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--nsv-muted);
+  letter-spacing: 0.5px;
+}
+
+/* HP bar */
+.nsv-hp-bar-wrap {
+  width: 100%;
+  height: 10px;
+  background: var(--nsv-bg3);
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 4px 0;
+}
+
+.nsv-hp-bar-wrap.nsv-thin {
+  height: 6px;
+  margin: 2px 0;
+}
+
+.nsv-hp-bar {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.nsv-hp-bar.healthy  { background: var(--nsv-green); }
+.nsv-hp-bar.wounded  { background: var(--nsv-yellow); }
+.nsv-hp-bar.critical { background: var(--nsv-red); }
+
+.nsv-hp-edit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nsv-hp-value {
+  width: 52px;
+  padding: 4px 6px;
+  background: var(--nsv-bg3);
+  border: 1px solid var(--nsv-border);
+  border-radius: 4px;
+  color: var(--nsv-text);
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.nsv-hp-sep,
+.nsv-hp-max {
+  font-size: 14px;
+  color: var(--nsv-muted);
+}
+
+.nsv-hp-temp {
+  font-size: 11px;
+  color: var(--nsv-accent);
+}
+
+/* Quick stats row */
+.nsv-quick-stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nsv-qs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--nsv-bg3);
+  border-radius: 6px;
+  padding: 4px 8px;
+  min-width: 44px;
+}
+
+.nsv-qs-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nsv-text);
+}
+
+.nsv-qs-lbl {
+  font-size: 10px;
+  color: var(--nsv-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Abilities ───────────────────────────────────────────── */
+.nsv-abilities {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 8px;
+}
+
+.nsv-ability {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.nsv-ability-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--nsv-bg3);
+  border: 1px solid var(--nsv-border);
+  border-radius: 6px;
+  color: var(--nsv-text);
+  cursor: pointer;
+  padding: 6px 4px;
+  font-family: var(--nsv-font);
+  transition: background 0.15s;
+  min-height: var(--nsv-touch);
+}
+
+.nsv-ability-btn:hover {
+  background: var(--nsv-accent2);
+  border-color: var(--nsv-accent);
+}
+
+.nsv-ability-label {
+  font-size: 10px;
+  color: var(--nsv-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nsv-ability-mod {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.nsv-ability-score {
+  font-size: 10px;
+  color: var(--nsv-muted);
+}
+
+.nsv-save-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(92, 107, 192, 0.2);
+  border: 1px solid var(--nsv-accent2);
+  border-radius: 4px;
+  color: var(--nsv-accent2);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 4px;
+  font-family: var(--nsv-font);
+  min-height: 30px;
+  transition: background 0.15s;
+}
+
+.nsv-save-btn:hover {
+  background: var(--nsv-accent2);
+  color: #fff;
+}
+
+/* ── Skills ──────────────────────────────────────────────── */
+.nsv-skills {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nsv-skill-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--nsv-text);
+  cursor: pointer;
+  font-family: var(--nsv-font);
+  font-size: 13px;
+  padding: 8px 10px;
+  min-height: var(--nsv-touch);
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.nsv-skill-row:hover {
+  background: var(--nsv-bg3);
+}
+
+.nsv-skill-row.proficient .nsv-skill-name::before {
+  content: "● ";
+  color: var(--nsv-accent);
+}
+
+.nsv-skill-total {
+  font-weight: 700;
+  color: var(--nsv-gold);
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ── Spell Slots ─────────────────────────────────────────── */
+.nsv-spell-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+}
+
+.nsv-slot-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--nsv-bg3);
+  border-radius: 6px;
+}
+
+.nsv-slot-label {
+  font-size: 12px;
+  color: var(--nsv-muted);
+  min-width: 28px;
+}
+
+.nsv-slot-pips {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.nsv-pip {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--nsv-border);
+  background: transparent;
+  transition: background 0.15s;
+}
+
+.nsv-pip.filled {
+  background: var(--nsv-accent);
+  border-color: var(--nsv-accent);
+}
+
+.nsv-slot-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nsv-slot-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--nsv-bg2);
+  border: 1px solid var(--nsv-border);
+  color: var(--nsv-text);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.nsv-slot-btn:hover {
+  background: var(--nsv-accent2);
+}
+
+.nsv-slot-count {
+  font-size: 12px;
+  color: var(--nsv-muted);
+  min-width: 32px;
+  text-align: center;
+}
+
+/* ── Item list ───────────────────────────────────────────── */
+.nsv-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+}
+
+.nsv-item-row {
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--nsv-bg3);
+  border: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.nsv-item-row.expanded {
+  border-color: var(--nsv-accent);
+}
+
+.nsv-item-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  min-height: var(--nsv-touch);
+}
+
+.nsv-item-name {
+  flex: 1;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nsv-item-badge {
+  font-size: 11px;
+  color: var(--nsv-accent);
+  background: rgba(124, 77, 255, 0.15);
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+
+.nsv-item-qty {
+  font-size: 11px;
+  color: var(--nsv-muted);
+}
+
+.nsv-item-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.nsv-item-description {
+  display: none;
+  padding: 8px 12px 12px;
+  border-top: 1px solid var(--nsv-border);
+  font-size: 13px;
+  color: var(--nsv-muted);
+  line-height: 1.6;
+}
+
+.nsv-item-row.expanded .nsv-item-description {
+  display: block;
+}
+
+.nsv-item-description p { margin: 0 0 6px; }
+.nsv-item-description p:last-child { margin: 0; }
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.nsv-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border-radius: var(--nsv-radius);
+  border: 1px solid var(--nsv-border);
+  background: var(--nsv-surface);
+  color: var(--nsv-text);
+  cursor: pointer;
+  font-family: var(--nsv-font);
+  font-size: 13px;
+  transition: background 0.15s, border-color 0.15s;
+  min-height: var(--nsv-touch);
+  white-space: nowrap;
+}
+
+.nsv-btn:hover {
+  background: var(--nsv-bg3);
+  border-color: var(--nsv-accent2);
+}
+
+.nsv-btn-primary {
+  background: var(--nsv-accent);
+  border-color: var(--nsv-accent);
+  color: #fff;
+}
+
+.nsv-btn-primary:hover {
+  background: var(--nsv-accent2);
+  border-color: var(--nsv-accent2);
+}
+
+.nsv-btn-danger {
+  background: var(--nsv-red);
+  border-color: var(--nsv-red);
+  color: #fff;
+}
+
+.nsv-btn-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--nsv-border);
+  background: var(--nsv-bg2);
+  color: var(--nsv-text);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--nsv-font);
+  transition: background 0.15s;
+  min-height: 32px;
+  white-space: nowrap;
+}
+
+.nsv-btn-sm:hover {
+  background: var(--nsv-accent2);
+  border-color: var(--nsv-accent);
+  color: #fff;
+}
+
+.nsv-btn-info {
+  background: transparent;
+  color: var(--nsv-muted);
+}
+
+/* ── Combat ──────────────────────────────────────────────── */
+.nsv-combat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.nsv-round-badge {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--nsv-gold);
+}
+
+.nsv-combat-controls {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nsv-combatant-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nsv-combatant {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--nsv-surface);
+  border: 1px solid var(--nsv-border);
+  border-radius: var(--nsv-radius);
+  transition: border-color 0.15s;
+}
+
+.nsv-combatant.nsv-active-turn {
+  border-color: var(--nsv-gold);
+  background: rgba(255, 179, 0, 0.08);
+}
+
+.nsv-combatant.nsv-defeated {
+  opacity: 0.4;
+}
+
+.nsv-combatant-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.nsv-turn-arrow {
+  color: var(--nsv-gold);
+  font-size: 14px;
+}
+
+.nsv-combatant-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--nsv-border);
+}
+
+.nsv-combatant-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nsv-combatant-name {
+  font-size: 14px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nsv-combatant-hp {
+  font-size: 11px;
+  color: var(--nsv-muted);
+}
+
+.nsv-combatant-init {
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: center;
+}
+
+.nsv-init-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nsv-gold);
+}
+
+/* ── Chat ────────────────────────────────────────────────── */
+.nsv-tab-panel[data-tab="chat"] {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.nsv-tab-panel[data-tab="chat"].nsv-active {
+  display: flex;
+}
+
+.nsv-chat-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.nsv-message {
+  background: var(--nsv-surface);
+  border: 1px solid var(--nsv-border);
+  border-radius: var(--nsv-radius);
+  padding: 8px 10px;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.nsv-message.nsv-roll {
+  border-color: var(--nsv-gold);
+  background: rgba(255, 179, 0, 0.06);
+}
+
+.nsv-message.nsv-whisper {
+  border-color: var(--nsv-accent);
+  background: rgba(124, 77, 255, 0.08);
+}
+
+.nsv-message-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.nsv-message-speaker {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--nsv-accent);
+}
+
+.nsv-message-time {
+  font-size: 10px;
+  color: var(--nsv-muted);
+}
+
+.nsv-whisper-badge {
+  font-size: 10px;
+  color: var(--nsv-accent);
+  background: rgba(124, 77, 255, 0.2);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+
+.nsv-message-flavor {
+  font-size: 12px;
+  color: var(--nsv-muted);
+  font-style: italic;
+  margin-bottom: 4px;
+}
+
+.nsv-message-content {
+  line-height: 1.5;
+}
+
+/* Roll tables / dice styling inside messages */
+.nsv-message-content .dice-total { font-weight: 700; color: var(--nsv-gold); }
+.nsv-message-content .dice-formula { color: var(--nsv-muted); font-size: 11px; }
+
+.nsv-chat-compose {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--nsv-border);
+  background: var(--nsv-bg2);
+  flex-shrink: 0;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+}
+
+.nsv-chat-input {
+  flex: 1;
+  background: var(--nsv-surface);
+  border: 1px solid var(--nsv-border);
+  border-radius: 6px;
+  color: var(--nsv-text);
+  font-family: var(--nsv-font);
+  font-size: 14px;
+  padding: 8px 10px;
+  resize: none;
+  line-height: 1.4;
+}
+
+.nsv-chat-input:focus {
+  outline: none;
+  border-color: var(--nsv-accent);
+}
+
+.nsv-chat-input::placeholder {
+  color: var(--nsv-muted);
+}
+
+.nsv-chat-send {
+  padding: 8px 14px;
+  align-self: flex-end;
+}
+
+/* ── Journal ─────────────────────────────────────────────── */
+.nsv-journal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nsv-journal-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--nsv-surface);
+  border: 1px solid var(--nsv-border);
+  border-radius: var(--nsv-radius);
+  color: var(--nsv-text);
+  cursor: pointer;
+  font-family: var(--nsv-font);
+  font-size: 14px;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+  min-height: var(--nsv-touch);
+}
+
+.nsv-journal-item:hover {
+  background: var(--nsv-bg3);
+  border-color: var(--nsv-accent2);
+}
+
+.nsv-journal-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.nsv-journal-icon {
+  width: 40px;
+  text-align: center;
+  font-size: 22px;
+  color: var(--nsv-muted);
+  flex-shrink: 0;
+}
+
+.nsv-journal-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.nsv-journal-name {
+  font-weight: 600;
+}
+
+.nsv-journal-pages-count {
+  font-size: 11px;
+  color: var(--nsv-muted);
+}
+
+.nsv-journal-arrow {
+  color: var(--nsv-muted);
+  flex-shrink: 0;
+}
+
+/* Journal viewer */
+.nsv-journal-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.nsv-journal-viewer-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.nsv-journal-viewer-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nsv-text);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nsv-journal-pages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.nsv-journal-page-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--nsv-gold);
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--nsv-border);
+}
+
+.nsv-journal-page-content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--nsv-text);
+}
+
+.nsv-journal-page-content h1,
+.nsv-journal-page-content h2,
+.nsv-journal-page-content h3 { color: var(--nsv-gold); margin-top: 1em; }
+.nsv-journal-page-content p  { margin: 0 0 0.75em; }
+.nsv-journal-page-content ul,
+.nsv-journal-page-content ol { padding-left: 1.5em; margin-bottom: 0.75em; }
+.nsv-journal-page-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 0.75em;
+}
+.nsv-journal-page-content th,
+.nsv-journal-page-content td {
+  border: 1px solid var(--nsv-border);
+  padding: 4px 6px;
+  text-align: left;
+}
+.nsv-journal-page-content th {
+  background: var(--nsv-bg3);
+  color: var(--nsv-gold);
+}
+
+/* ── Empty states ────────────────────────────────────────── */
+.nsv-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 20px;
+  color: var(--nsv-muted);
+  text-align: center;
+}
+
+.nsv-empty i {
+  font-size: 48px;
+  opacity: 0.3;
+}
+
+.nsv-empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ── Sidebar toggle button ───────────────────────────────── */
+.nsv-sidebar-btn {
+  margin-left: auto;
+  padding: 4px 8px;
+  background: rgba(124, 77, 255, 0.15);
+  border: 1px solid var(--nsv-accent);
+  border-radius: 4px;
+  color: #7c4dff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s;
+}
+
+.nsv-sidebar-btn:hover {
+  background: rgba(124, 77, 255, 0.35);
+}
+
+/* ── Safe-area insets (notch / home bar) ─────────────────── */
+.nsv-nav {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: calc(var(--nsv-nav-h) + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── Collapsible toggle icon rotation ───────────────────── */
+.nsv-section-title .fa-chevron-down {
+  transition: transform 0.2s;
+}
+
+.nsv-section.open .nsv-section-title .fa-chevron-down {
+  transform: rotate(180deg);
+}
+
+/* ── Scrollbar styling ───────────────────────────────────── */
+.nsv-tab-panel::-webkit-scrollbar,
+.nsv-chat-log::-webkit-scrollbar {
+  width: 4px;
+}
+
+.nsv-tab-panel::-webkit-scrollbar-track,
+.nsv-chat-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.nsv-tab-panel::-webkit-scrollbar-thumb,
+.nsv-chat-log::-webkit-scrollbar-thumb {
+  background: var(--nsv-border);
+  border-radius: 2px;
+}

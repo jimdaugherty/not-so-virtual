@@ -1,0 +1,52 @@
+{
+  "NSV.Title": "Not So Virtual",
+  "NSV.OpenMobileUI": "Open Mobile UI",
+  "NSV.CloseMobileUI": "Close Mobile UI",
+
+  "NSV.Tab.Character": "Character",
+  "NSV.Tab.Combat": "Combat",
+  "NSV.Tab.Chat": "Chat",
+  "NSV.Tab.Journal": "Journal",
+
+  "NSV.Character.NoCharacter": "No character assigned. Ask your GM to link a character to your user.",
+  "NSV.Character.HP": "HP",
+  "NSV.Character.AC": "AC",
+  "NSV.Character.Initiative": "Initiative",
+  "NSV.Character.Speed": "Speed",
+  "NSV.Character.ProfBonus": "Prof",
+  "NSV.Character.Abilities": "Abilities",
+  "NSV.Character.SavingThrows": "Saving Throws",
+  "NSV.Character.Skills": "Skills",
+  "NSV.Character.Actions": "Actions",
+  "NSV.Character.Spells": "Spells",
+  "NSV.Character.Equipment": "Equipment",
+  "NSV.Character.SpellSlots": "Spell Slots",
+  "NSV.Character.RollAttack": "Attack",
+  "NSV.Character.UseItem": "Use",
+
+  "NSV.Combat.NoCombat": "No active combat encounter.",
+  "NSV.Combat.Round": "Round",
+  "NSV.Combat.RollInitiative": "Roll Initiative",
+  "NSV.Combat.NextTurn": "Next Turn",
+  "NSV.Combat.EndCombat": "End Combat",
+  "NSV.Combat.StartCombat": "Start Combat",
+
+  "NSV.Chat.Placeholder": "Send a message… (/ for commands)",
+  "NSV.Chat.Send": "Send",
+  "NSV.Chat.NoMessages": "No messages yet.",
+
+  "NSV.Journal.NoEntries": "No journal entries available.",
+  "NSV.Journal.Back": "← Back",
+  "NSV.Journal.Pages": "pages",
+
+  "NSV.Settings.AutoActivate.Name": "Auto-activate on Mobile",
+  "NSV.Settings.AutoActivate.Hint": "Automatically open the mobile UI when a phone or tablet is detected. Requires reload.",
+  "NSV.Settings.DisableCanvas.Name": "Disable Canvas",
+  "NSV.Settings.DisableCanvas.Hint": "Disable the canvas to improve performance on mobile devices. Requires reload.",
+  "NSV.Settings.Theme.Name": "Theme",
+  "NSV.Settings.Theme.Hint": "Color theme for the mobile UI.",
+
+  "NSV.Error.NoActor": "No character found.",
+  "NSV.Error.NoItem": "Item not found.",
+  "NSV.Error.NotGM": "Only the GM can perform this action."
+}

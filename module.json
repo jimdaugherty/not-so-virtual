@@ -1,0 +1,28 @@
+{
+  "id": "not-so-virtual",
+  "title": "Not So Virtual",
+  "description": "A mobile-friendly UI for FoundryVTT that lets players on phones and tablets manage their character sheet, track combat, use chat, and read journals — without rendering the canvas.",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13"
+  },
+  "authors": [
+    {
+      "name": "jimdaugherty",
+      "url": "https://github.com/jimdaugherty"
+    }
+  ],
+  "esmodules": ["scripts/not-so-virtual.js"],
+  "styles": ["styles/not-so-virtual.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "url": "https://github.com/jimdaugherty/not-so-virtual",
+  "manifest": "https://raw.githubusercontent.com/jimdaugherty/not-so-virtual/main/module.json",
+  "download": "https://github.com/jimdaugherty/not-so-virtual/releases/latest/download/module.zip"
+}

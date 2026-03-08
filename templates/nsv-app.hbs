@@ -1,0 +1,363 @@
+<div id="nsv-app" class="not-so-virtual">
+
+  {{!-- ── Header ──────────────────────────────────────────────────────────── --}}
+  <header class="nsv-header">
+    <span class="nsv-logo"><i class="fas fa-mobile-alt"></i> Not So Virtual</span>
+    {{#if character}}
+      <span class="nsv-player-name">{{character.name}}</span>
+    {{/if}}
+  </header>
+
+  {{!-- ── Tab panels ──────────────────────────────────────────────────────── --}}
+  <main class="nsv-content">
+
+    {{!-- CHARACTER ────────────────────────────────────────────────────────── --}}
+    <section class="nsv-tab-panel {{#eq activeTab "character"}}nsv-active{{/eq}}" data-tab="character">
+      {{#if character}}
+
+        {{!-- Vitals row --}}
+        <div class="nsv-vitals">
+          <img class="nsv-actor-img" src="{{character.img}}" alt="{{character.name}}" />
+          <div class="nsv-vitals-stats">
+            {{#if character.hp}}
+              <div class="nsv-stat-block">
+                <label>HP</label>
+                <div class="nsv-hp-bar-wrap">
+                  <div class="nsv-hp-bar {{character.hp.cssClass}}" style="width:{{character.hp.percent}}%"></div>
+                </div>
+                <div class="nsv-hp-edit">
+                  <input class="nsv-hp-value" type="number" value="{{character.hp.value}}" min="0" max="{{character.hp.max}}" />
+                  <span class="nsv-hp-sep">/</span>
+                  <span class="nsv-hp-max">{{character.hp.max}}</span>
+                  {{#if character.hp.temp}}<span class="nsv-hp-temp">(+{{character.hp.temp}} temp)</span>{{/if}}
+                </div>
+              </div>
+            {{/if}}
+            <div class="nsv-quick-stats">
+              {{#if character.ac}}<div class="nsv-qs"><span class="nsv-qs-val">{{character.ac}}</span><span class="nsv-qs-lbl">AC</span></div>{{/if}}
+              {{#if character.initiative}}<div class="nsv-qs"><span class="nsv-qs-val">{{character.initiative}}</span><span class="nsv-qs-lbl">Init</span></div>{{/if}}
+              {{#if character.speed}}<div class="nsv-qs"><span class="nsv-qs-val">{{character.speed}}</span><span class="nsv-qs-lbl">Spd</span></div>{{/if}}
+              {{#if character.profBonus}}<div class="nsv-qs"><span class="nsv-qs-val">{{character.profBonus}}</span><span class="nsv-qs-lbl">Prof</span></div>{{/if}}
+            </div>
+          </div>
+        </div>
+
+        {{!-- Abilities --}}
+        {{#if character.abilities}}
+          <section class="nsv-section">
+            <h3 class="nsv-section-title">Abilities</h3>
+            <div class="nsv-abilities">
+              {{#each character.abilities}}
+                <div class="nsv-ability">
+                  <button class="nsv-ability-btn" data-action="roll-ability" data-ability="{{key}}" title="Roll {{label}} check">
+                    <span class="nsv-ability-label">{{label}}</span>
+                    <span class="nsv-ability-mod">{{mod}}</span>
+                    <span class="nsv-ability-score">({{score}})</span>
+                  </button>
+                  {{#if saveTotal}}
+                    <button class="nsv-save-btn" data-action="roll-save" data-ability="{{key}}" title="Roll {{label}} save">
+                      <i class="fas fa-shield-alt"></i>{{saveTotal}}
+                    </button>
+                  {{/if}}
+                </div>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{!-- Skills --}}
+        {{#if character.skills}}
+          <section class="nsv-section nsv-collapsible">
+            <h3 class="nsv-section-title nsv-toggle">Skills <i class="fas fa-chevron-down"></i></h3>
+            <div class="nsv-section-body nsv-hidden">
+              <div class="nsv-skills">
+                {{#each character.skills}}
+                  <button class="nsv-skill-row {{#if proficient}}proficient{{/if}}" data-action="roll-skill" data-skill="{{key}}">
+                    <span class="nsv-skill-name">{{label}}</span>
+                    <span class="nsv-skill-total">{{total}}</span>
+                  </button>
+                {{/each}}
+              </div>
+            </div>
+          </section>
+        {{/if}}
+
+        {{!-- Spell Slots --}}
+        {{#if character.spellSlots}}
+          <section class="nsv-section">
+            <h3 class="nsv-section-title">Spell Slots</h3>
+            <div class="nsv-spell-slots">
+              {{#each character.spellSlots}}
+                <div class="nsv-slot-group">
+                  <span class="nsv-slot-label">{{label}}</span>
+                  <div class="nsv-slot-pips">
+                    {{#each pips}}
+                      <span class="nsv-pip {{#if this}}filled{{/if}}"></span>
+                    {{/each}}
+                  </div>
+                  <div class="nsv-slot-controls">
+                    <button class="nsv-slot-btn" data-action="slot-use" data-level="{{key}}" title="Use slot">−</button>
+                    <span class="nsv-slot-count">{{value}}/{{max}}</span>
+                    <button class="nsv-slot-btn" data-action="slot-restore" data-level="{{key}}" title="Restore slot">+</button>
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{!-- Weapons / Actions --}}
+        {{#if character.weapons}}
+          <section class="nsv-section">
+            <h3 class="nsv-section-title">Weapons</h3>
+            <div class="nsv-item-list">
+              {{#each character.weapons}}
+                <div class="nsv-item-row" data-item-id="{{id}}">
+                  <div class="nsv-item-main">
+                    <span class="nsv-item-name">{{name}}</span>
+                    <div class="nsv-item-actions">
+                      <button class="nsv-btn-sm" data-action="roll-attack">⚔ Attack</button>
+                      <button class="nsv-btn-sm nsv-btn-info" data-action="item-expand">▾</button>
+                    </div>
+                  </div>
+                  <div class="nsv-item-description">
+                    {{{system.description.value}}}
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          </section>
+        {{/if}}
+
+        {{!-- Features --}}
+        {{#if character.features}}
+          <section class="nsv-section nsv-collapsible">
+            <h3 class="nsv-section-title nsv-toggle">Features <i class="fas fa-chevron-down"></i></h3>
+            <div class="nsv-section-body nsv-hidden">
+              <div class="nsv-item-list">
+                {{#each character.features}}
+                  <div class="nsv-item-row" data-item-id="{{id}}">
+                    <div class="nsv-item-main">
+                      <span class="nsv-item-name">{{name}}</span>
+                      <div class="nsv-item-actions">
+                        {{#if system.activation.type}}
+                          <button class="nsv-btn-sm" data-action="use-item">Use</button>
+                        {{/if}}
+                        <button class="nsv-btn-sm nsv-btn-info" data-action="item-expand">▾</button>
+                      </div>
+                    </div>
+                    <div class="nsv-item-description">{{{system.description.value}}}</div>
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          </section>
+        {{/if}}
+
+        {{!-- Spells --}}
+        {{#if character.spells}}
+          <section class="nsv-section nsv-collapsible">
+            <h3 class="nsv-section-title nsv-toggle">Spells <i class="fas fa-chevron-down"></i></h3>
+            <div class="nsv-section-body nsv-hidden">
+              <div class="nsv-item-list">
+                {{#each character.spells}}
+                  <div class="nsv-item-row" data-item-id="{{id}}">
+                    <div class="nsv-item-main">
+                      <span class="nsv-item-name">{{name}}</span>
+                      <span class="nsv-item-badge">L{{system.level}}</span>
+                      <div class="nsv-item-actions">
+                        <button class="nsv-btn-sm" data-action="use-item">Cast</button>
+                        <button class="nsv-btn-sm nsv-btn-info" data-action="item-expand">▾</button>
+                      </div>
+                    </div>
+                    <div class="nsv-item-description">{{{system.description.value}}}</div>
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          </section>
+        {{/if}}
+
+        {{!-- Equipment --}}
+        {{#if character.equipment}}
+          <section class="nsv-section nsv-collapsible">
+            <h3 class="nsv-section-title nsv-toggle">Equipment <i class="fas fa-chevron-down"></i></h3>
+            <div class="nsv-section-body nsv-hidden">
+              <div class="nsv-item-list">
+                {{#each character.equipment}}
+                  <div class="nsv-item-row" data-item-id="{{id}}">
+                    <div class="nsv-item-main">
+                      <span class="nsv-item-name">{{name}}</span>
+                      {{#if system.quantity}}<span class="nsv-item-qty">×{{system.quantity}}</span>{{/if}}
+                      <div class="nsv-item-actions">
+                        {{#if system.activation.type}}
+                          <button class="nsv-btn-sm" data-action="use-item">Use</button>
+                        {{/if}}
+                        <button class="nsv-btn-sm nsv-btn-info" data-action="item-expand">▾</button>
+                      </div>
+                    </div>
+                    <div class="nsv-item-description">{{{system.description.value}}}</div>
+                  </div>
+                {{/each}}
+              </div>
+            </div>
+          </section>
+        {{/if}}
+
+      {{else}}
+        <div class="nsv-empty">
+          <i class="fas fa-user-slash"></i>
+          <p>{{localize "NSV.Character.NoCharacter"}}</p>
+        </div>
+      {{/if}}
+    </section>
+
+    {{!-- COMBAT ─────────────────────────────────────────────────────────── --}}
+    <section class="nsv-tab-panel {{#eq activeTab "combat"}}nsv-active{{/eq}}" data-tab="combat">
+      {{#if combat.active}}
+
+        <div class="nsv-combat-header">
+          <span class="nsv-round-badge">Round {{combat.round}}</span>
+          <div class="nsv-combat-controls">
+            <button class="nsv-btn" data-action="roll-initiative">
+              <i class="fas fa-dice-d20"></i> Roll Initiative
+            </button>
+            {{#if isGM}}
+              <button class="nsv-btn nsv-btn-primary" data-action="next-turn">
+                <i class="fas fa-step-forward"></i> Next Turn
+              </button>
+              <button class="nsv-btn nsv-btn-danger" data-action="end-combat">
+                <i class="fas fa-stop"></i> End
+              </button>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="nsv-combatant-list">
+          {{#each combat.turns}}
+            <div class="nsv-combatant {{#if isActive}}nsv-active-turn{{/if}} {{#if isDefeated}}nsv-defeated{{/if}}">
+              <div class="nsv-combatant-left">
+                {{#if isActive}}<span class="nsv-turn-arrow">▶</span>{{/if}}
+                <img class="nsv-combatant-img" src="{{img}}" alt="{{name}}" />
+              </div>
+              <div class="nsv-combatant-info">
+                <span class="nsv-combatant-name">{{name}}</span>
+                {{#if hp}}
+                  <div class="nsv-hp-bar-wrap nsv-thin">
+                    <div class="nsv-hp-bar {{#gt hp.percent 50}}healthy{{else}}{{#gt hp.percent 25}}wounded{{else}}critical{{/gt}}{{/gt}}" style="width:{{hp.percent}}%"></div>
+                  </div>
+                  <span class="nsv-combatant-hp">{{hp.value}}/{{hp.max}}</span>
+                {{/if}}
+              </div>
+              <div class="nsv-combatant-init">
+                <span class="nsv-init-value">{{initiative}}</span>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+
+      {{else}}
+        <div class="nsv-empty">
+          <i class="fas fa-swords"></i>
+          <p>{{localize "NSV.Combat.NoCombat"}}</p>
+          {{#if combat.turns.length}}
+            <button class="nsv-btn nsv-btn-primary" data-action="roll-initiative">
+              <i class="fas fa-dice-d20"></i> Roll Initiative
+            </button>
+          {{/if}}
+        </div>
+      {{/if}}
+    </section>
+
+    {{!-- CHAT ───────────────────────────────────────────────────────────── --}}
+    <section class="nsv-tab-panel {{#eq activeTab "chat"}}nsv-active{{/eq}}" data-tab="chat">
+      <div class="nsv-chat-log">
+        {{#each messages}}
+          <div class="nsv-message {{#if isRoll}}nsv-roll{{/if}} {{#if whisper}}nsv-whisper{{/if}}">
+            <div class="nsv-message-meta">
+              <span class="nsv-message-speaker">{{speaker}}</span>
+              <span class="nsv-message-time">{{timestamp}}</span>
+              {{#if whisper}}<span class="nsv-whisper-badge">whisper</span>{{/if}}
+            </div>
+            {{#if flavor}}<div class="nsv-message-flavor">{{flavor}}</div>{{/if}}
+            <div class="nsv-message-content">{{{content}}}</div>
+          </div>
+        {{else}}
+          <div class="nsv-empty nsv-chat-empty">
+            <p>{{localize "NSV.Chat.NoMessages"}}</p>
+          </div>
+        {{/each}}
+      </div>
+      <div class="nsv-chat-compose">
+        <textarea class="nsv-chat-input" placeholder="{{localize "NSV.Chat.Placeholder"}}" rows="2"></textarea>
+        <button class="nsv-btn nsv-btn-primary nsv-chat-send" data-action="chat-send">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </section>
+
+    {{!-- JOURNAL ─────────────────────────────────────────────────────────── --}}
+    <section class="nsv-tab-panel {{#eq activeTab "journal"}}nsv-active{{/eq}}" data-tab="journal">
+
+      {{#if openJournal}}
+        <div class="nsv-journal-viewer">
+          <div class="nsv-journal-viewer-header">
+            <button class="nsv-btn" data-action="journal-back">
+              <i class="fas fa-arrow-left"></i> {{localize "NSV.Journal.Back"}}
+            </button>
+            <h2 class="nsv-journal-viewer-title">{{openJournal.name}}</h2>
+          </div>
+          <div class="nsv-journal-pages">
+            {{#each openJournal.pages}}
+              <div class="nsv-journal-page">
+                {{#if name}}<h3 class="nsv-journal-page-title">{{name}}</h3>{{/if}}
+                <div class="nsv-journal-page-content">{{{content}}}</div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      {{else}}
+        <div class="nsv-journal-list">
+          {{#each journals}}
+            <button class="nsv-journal-item" data-journal-id="{{id}}">
+              {{#if img}}<img class="nsv-journal-thumb" src="{{img}}" alt="" />{{else}}<i class="fas fa-book nsv-journal-icon"></i>{{/if}}
+              <div class="nsv-journal-info">
+                <span class="nsv-journal-name">{{name}}</span>
+                {{#if pageCount}}<span class="nsv-journal-pages-count">{{pageCount}} {{localize "NSV.Journal.Pages"}}</span>{{/if}}
+              </div>
+              <i class="fas fa-chevron-right nsv-journal-arrow"></i>
+            </button>
+          {{else}}
+            <div class="nsv-empty">
+              <i class="fas fa-book-open"></i>
+              <p>{{localize "NSV.Journal.NoEntries"}}</p>
+            </div>
+          {{/each}}
+        </div>
+      {{/if}}
+
+    </section>
+
+  </main>
+
+  {{!-- ── Bottom nav ──────────────────────────────────────────────────────── --}}
+  <nav class="nsv-nav">
+    <button class="nsv-nav-btn {{#eq activeTab "character"}}nsv-active{{/eq}}" data-tab="character">
+      <i class="fas fa-user"></i>
+      <span>{{localize "NSV.Tab.Character"}}</span>
+    </button>
+    <button class="nsv-nav-btn {{#eq activeTab "combat"}}nsv-active{{/eq}}" data-tab="combat">
+      <i class="fas fa-swords"></i>
+      <span>{{localize "NSV.Tab.Combat"}}</span>
+    </button>
+    <button class="nsv-nav-btn {{#eq activeTab "chat"}}nsv-active{{/eq}}" data-tab="chat">
+      <i class="fas fa-comments"></i>
+      <span>{{localize "NSV.Tab.Chat"}}</span>
+    </button>
+    <button class="nsv-nav-btn {{#eq activeTab "journal"}}nsv-active{{/eq}}" data-tab="journal">
+      <i class="fas fa-book"></i>
+      <span>{{localize "NSV.Tab.Journal"}}</span>
+    </button>
+  </nav>
+
+</div>
