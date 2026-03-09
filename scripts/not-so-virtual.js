@@ -461,7 +461,7 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     if (content.startsWith("/")) {
       const msg = await ChatMessage.create({
-        user: game.user.id,
+        author: game.user.id,
         speaker: ChatMessage.getSpeaker(),
         content,
       }).catch(() => null);
@@ -471,7 +471,7 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
           .catch((err) => console.warn("Not So Virtual |", err));
     } else {
       await ChatMessage.create({
-        user: game.user.id,
+        author: game.user.id,
         speaker: ChatMessage.getSpeaker(),
         content,
         style: CONST.CHAT_MESSAGE_STYLES?.OOC ?? 0,
