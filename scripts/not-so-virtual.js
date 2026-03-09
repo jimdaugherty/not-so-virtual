@@ -482,157 +482,42 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   // ─── Chat card action handling ────────────────────────────────────────────
 
-  /** Attach delegated click handler to the chat log for dnd5e chat card buttons. */
+  /**
+   * When a user taps an action button inside our chat log, find the same
+   * button on the matching element in FoundryVTT's own (possibly hidden)
+   * #chat-log and click it there — letting the game system (dnd5e etc.)
+   * handle it natively with all its own dialogs and event logic intact.
+   */
   _attachChatLogHandlers(chatLogEl) {
     if (!chatLogEl) return;
-    const $chatLog = $(chatLogEl);
-    $chatLog.off("click.nsvchatcard").on(
-      "click.nsvchatcard",
-      ".nsv-message-content button[data-action]",
-      async (e) => {
+    $(chatLogEl)
+      .off("click.nsvchatcard")
+      .on("click.nsvchatcard", ".nsv-message-content button", (e) => {
         const button = e.currentTarget;
-        const action = button.dataset.action;
-        const normalized = this._normalizeChatAction(action);
-        if (normalized !== "attack" && normalized !== "damage") return;
-        e.preventDefault();
-        e.stopPropagation();
         const msgEl = button.closest("[data-message-id]");
         if (!msgEl) return;
-        const message = game.messages?.get(msgEl.dataset.messageId);
-        if (!message) return;
-        await this._handleChatCardAction(message, button, normalized);
-      }
-    );
-  }
 
-  /** Normalise action names across different dnd5e versions. */
-  _normalizeChatAction(action) {
-    if (["attack", "rollAttack", "roll-attack"].includes(action)) return "attack";
-    if (["damage", "rollDamage", "roll-damage"].includes(action)) return "damage";
-    return action;
-  }
+        const messageId = msgEl.dataset.messageId;
+        const originalMsg = document.querySelector(
+          `#chat-log .message[data-message-id="${messageId}"]`,
+        );
+        if (!originalMsg) return;
 
-  /** Resolve actor + item from the chat card and dispatch to the correct dialog. */
-  async _handleChatCardAction(message, button, normalizedAction) {
-    const card =
-      button.closest("[data-item-id]") ??
-      button.closest("[data-item-uuid]") ??
-      button.closest(".chat-card") ??
-      button.closest(".dnd5e2");
+        // Match button by its index among siblings with the same tag
+        const siblings = Array.from(
+          button.closest(".nsv-message-content").querySelectorAll("button"),
+        );
+        const idx = siblings.indexOf(button);
+        const originalBtn = originalMsg.querySelectorAll(
+          ".message-content button",
+        )[idx];
 
-    const itemId = card?.dataset.itemId;
-    const actorId = card?.dataset.actorId;
-    const itemUuid = card?.dataset.itemUuid;
-    const actorUuid = card?.dataset.actorUuid;
-
-    let actor = null;
-    if (actorUuid) {
-      try { actor = await fromUuid(actorUuid); } catch (err) {
-        console.debug("Not So Virtual | Failed to resolve actor from UUID:", actorUuid, err);
-      }
-    }
-    if (!actor && actorId) actor = game.actors?.get(actorId);
-    if (!actor) actor = game.user?.character;
-    if (!actor) {
-      ui.notifications?.warn(game.i18n.localize("NSV.Error.NoActor"));
-      return;
-    }
-
-    let item = null;
-    if (itemUuid) {
-      try { item = await fromUuid(itemUuid); } catch (err) {
-        console.debug("Not So Virtual | Failed to resolve item from UUID:", itemUuid, err);
-      }
-    }
-    if (!item && itemId) item = actor.items?.get(itemId);
-    if (!item) {
-      ui.notifications?.warn(game.i18n.localize("NSV.Error.NoItem"));
-      return;
-    }
-
-    if (normalizedAction === "attack") await this._showAttackDialog(item);
-    else if (normalizedAction === "damage") await this._showDamageDialog(item);
-  }
-
-  /** Full-page dialog for choosing attack mode then rolling. */
-  async _showAttackDialog(item) {
-    const choice = await this._showFullPageDialog(
-      `${item.name} — ${game.i18n.localize("NSV.Dialog.Attack.Title")}`,
-      [
-        { label: game.i18n.localize("NSV.Dialog.Attack.Normal"),       value: "normal",       cssClass: "nsv-btn-primary" },
-        { label: game.i18n.localize("NSV.Dialog.Attack.Advantage"),    value: "advantage",    cssClass: "nsv-btn-success" },
-        { label: game.i18n.localize("NSV.Dialog.Attack.Disadvantage"), value: "disadvantage", cssClass: "nsv-btn-danger"  },
-      ]
-    );
-    if (choice === null) return;
-    const opts = { advantage: choice === "advantage", disadvantage: choice === "disadvantage" };
-    if (item.rollAttack) await item.rollAttack(opts);
-    else if (item.use) await item.use(opts);
-  }
-
-  /** Full-page dialog for choosing normal vs critical damage then rolling. */
-  async _showDamageDialog(item) {
-    const choice = await this._showFullPageDialog(
-      `${item.name} — ${game.i18n.localize("NSV.Dialog.Damage.Title")}`,
-      [
-        { label: game.i18n.localize("NSV.Dialog.Damage.Normal"),   value: "normal",   cssClass: "nsv-btn-primary" },
-        { label: game.i18n.localize("NSV.Dialog.Damage.Critical"), value: "critical", cssClass: "nsv-btn-danger"  },
-      ]
-    );
-    if (choice === null) return;
-    const opts = { critical: choice === "critical" };
-    if (item.rollDamage) await item.rollDamage(opts);
-    else if (item.use) await item.use(opts);
-  }
-
-  /**
-   * Display a full-page modal overlay with a set of option buttons.
-   * Returns a Promise that resolves to the chosen button's value, or null if cancelled.
-   *
-   * @param {string} title   - Dialog heading text
-   * @param {Array<{label:string, value:string, cssClass:string}>} buttons
-   * @returns {Promise<string|null>}
-   */
-  _showFullPageDialog(title, buttons) {
-    return new Promise((resolve) => {
-      const overlay = document.createElement("div");
-      // Inherit NSV CSS variables via the `not-so-virtual` class
-      overlay.className = "nsv-dialog-overlay not-so-virtual";
-
-      const btnHtml = buttons
-        .map(
-          (b) => {
-            // Allow only word chars and hyphens in CSS class names to prevent attribute injection
-            const safeClass = (b.cssClass ?? "").replace(/[^\w-]/g, "");
-            return (
-              `<button class="nsv-btn nsv-dialog-option ${safeClass}" ` +
-              `data-value="${foundry.utils.escapeHTML(String(b.value))}">${foundry.utils.escapeHTML(b.label)}</button>`
-            );
-          }
-        )
-        .join("");
-
-      overlay.innerHTML = `
-        <div class="nsv-dialog">
-          <h2 class="nsv-dialog-title">${foundry.utils.escapeHTML(title)}</h2>
-          <div class="nsv-dialog-buttons">${btnHtml}</div>
-          <button class="nsv-btn nsv-dialog-cancel">${foundry.utils.escapeHTML(game.i18n.localize("Cancel"))}</button>
-        </div>`;
-
-      overlay.querySelectorAll(".nsv-dialog-option").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          overlay.remove();
-          resolve(btn.dataset.value);
-        });
+        if (originalBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          originalBtn.click();
+        }
       });
-
-      overlay.querySelector(".nsv-dialog-cancel").addEventListener("click", () => {
-        overlay.remove();
-        resolve(null);
-      });
-
-      document.body.appendChild(overlay);
-    });
   }
 
   // ─── Targeted refresh helpers ─────────────────────────────────────────────
@@ -685,7 +570,7 @@ Hooks.once("init", () => {
     scope: "client",
     config: true,
     type: Boolean,
-    default: true,
+    default: false,
     onChange: () => window.location.reload(),
   });
 
