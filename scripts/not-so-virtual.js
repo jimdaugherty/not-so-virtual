@@ -251,7 +251,7 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
     return (game.messages?.contents ?? []).slice(-60).map((msg) => ({
       id: msg.id,
       content: msg.content,
-      speaker: msg.speaker?.alias || msg.user?.name || "?",
+      speaker: msg.speaker?.alias || msg.author?.name || "?",
       timestamp: new Date(msg.timestamp).toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
