@@ -1041,3 +1041,80 @@
   background: var(--nsv-border);
   border-radius: 2px;
 }
+
+/* ── Full-page action dialog overlay ────────────────────────── */
+.nsv-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: var(--nsv-font);
+}
+
+.nsv-dialog {
+  background: var(--nsv-surface);
+  border: 1px solid var(--nsv-border);
+  border-radius: var(--nsv-radius);
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--nsv-text);
+}
+
+.nsv-dialog-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nsv-gold);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.nsv-dialog-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nsv-dialog-option {
+  width: 100%;
+  min-height: var(--nsv-touch);
+  font-size: 15px;
+}
+
+.nsv-dialog-cancel {
+  width: 100%;
+  min-height: var(--nsv-touch);
+  background: transparent;
+  border: 1px solid var(--nsv-muted);
+  color: var(--nsv-muted);
+  border-radius: var(--nsv-radius);
+  font-family: var(--nsv-font);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nsv-dialog-cancel:hover {
+  background: rgba(136, 136, 170, 0.15);
+  color: var(--nsv-text);
+}
+
+/* Ensure nsv-btn-success (advantage) has a visible style */
+.nsv-btn.nsv-btn-success {
+  background: var(--nsv-green);
+  border-color: var(--nsv-green);
+  color: #fff;
+}
+
+.nsv-btn.nsv-btn-success:hover {
+  background: #43a047;
+  border-color: #43a047;
+}

@@ -273,7 +273,7 @@
     <section class="nsv-tab-panel {{#eq activeTab "chat"}}nsv-active{{/eq}}" data-tab="chat">
       <div class="nsv-chat-log">
         {{#each messages}}
-          <div class="nsv-message {{#if isRoll}}nsv-roll{{/if}} {{#if whisper}}nsv-whisper{{/if}}">
+          <div class="nsv-message {{#if isRoll}}nsv-roll{{/if}} {{#if whisper}}nsv-whisper{{/if}}" data-message-id="{{id}}">
             <div class="nsv-message-meta">
               <span class="nsv-message-speaker">{{speaker}}</span>
               <span class="nsv-message-time">{{timestamp}}</span>
