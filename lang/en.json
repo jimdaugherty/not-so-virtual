@@ -48,5 +48,13 @@
 
   "NSV.Error.NoActor": "No character found.",
   "NSV.Error.NoItem": "Item not found.",
-  "NSV.Error.NotGM": "Only the GM can perform this action."
+  "NSV.Error.NotGM": "Only the GM can perform this action.",
+
+  "NSV.Dialog.Attack.Title": "Attack Roll",
+  "NSV.Dialog.Attack.Normal": "Normal Roll",
+  "NSV.Dialog.Attack.Advantage": "Advantage",
+  "NSV.Dialog.Attack.Disadvantage": "Disadvantage",
+  "NSV.Dialog.Damage.Title": "Damage Roll",
+  "NSV.Dialog.Damage.Normal": "Normal Damage",
+  "NSV.Dialog.Damage.Critical": "Critical Hit!"
 }
