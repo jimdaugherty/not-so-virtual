@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd /c \"gh auth status 2>&1\")"
+    ]
+  }
+}

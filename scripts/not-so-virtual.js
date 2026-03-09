@@ -19,7 +19,7 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 function isMobileDevice() {
   return (
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
+      navigator.userAgent,
     ) ||
     (navigator.maxTouchPoints > 1 && window.innerWidth < 1024)
   );
@@ -36,7 +36,6 @@ function clamp(v, min, max) {
 // ─── Main Application (ApplicationV2) ─────────────────────────────────────────
 
 class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
-
   static DEFAULT_OPTIONS = {
     id: "not-so-virtual-app",
     classes: ["not-so-virtual"],
@@ -98,16 +97,11 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     // ── AC ──────────────────────────────────────────────────────────────────
     const ac =
-      sys.attributes?.ac?.value ??
-      sys.attributes?.ac ??
-      sys.ac?.value ??
-      null;
+      sys.attributes?.ac?.value ?? sys.attributes?.ac ?? sys.ac?.value ?? null;
 
     // ── Initiative / Speed / Prof ────────────────────────────────────────────
     const initiative =
-      sys.attributes?.init?.total ??
-      sys.attributes?.init?.value ??
-      null;
+      sys.attributes?.init?.total ?? sys.attributes?.init?.value ?? null;
     const speed =
       sys.attributes?.movement?.walk ??
       sys.attributes?.speed?.value ??
@@ -125,8 +119,8 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
           val.saveBonus !== undefined
             ? signedNum(mod + (val.saveBonus ?? 0))
             : val.save !== undefined
-            ? signedNum(val.save.value ?? mod)
-            : null;
+              ? signedNum(val.save.value ?? mod)
+              : null;
         return {
           key,
           label: key.toUpperCase().slice(0, 3),
@@ -146,7 +140,7 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
           key,
           label:
             game.i18n.localize(
-              `DND5E.Skill${key.charAt(0).toUpperCase() + key.slice(1)}`
+              `DND5E.Skill${key.charAt(0).toUpperCase() + key.slice(1)}`,
             ) || key,
           total: signedNum(val.total ?? val.value ?? 0),
           passive: val.passive ?? 0,
@@ -177,13 +171,13 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
       .sort(
         (a, b) =>
           (a.system?.level ?? 0) - (b.system?.level ?? 0) ||
-          a.name.localeCompare(b.name)
+          a.name.localeCompare(b.name),
       );
     const features = items.filter((i) =>
-      ["feat", "feature", "action"].includes(i.type)
+      ["feat", "feature", "action"].includes(i.type),
     );
     const equipment = items.filter((i) =>
-      ["equipment", "consumable", "tool", "backpack", "loot"].includes(i.type)
+      ["equipment", "consumable", "tool", "backpack", "loot"].includes(i.type),
     );
 
     return {
@@ -218,7 +212,7 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
         const pct = clamp(
           Math.round((rawHp.value / (rawHp.max || 1)) * 100),
           0,
-          100
+          100,
         );
         hp = { value: rawHp.value, max: rawHp.max, percent: pct };
       }
@@ -236,7 +230,7 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
     });
 
     const myCombatant = game.combat.getCombatantsByActor?.(
-      game.user?.character?.id ?? ""
+      game.user?.character?.id ?? "",
     )?.[0];
 
     return {
@@ -319,13 +313,17 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
     html.find("[data-action='roll-ability']").on("click", async (e) => {
       const actor = game.user?.character;
       if (!actor) return;
-      await actor.rollAbilityTest(e.currentTarget.dataset.ability, { event: e });
+      await actor.rollAbilityTest(e.currentTarget.dataset.ability, {
+        event: e,
+      });
     });
 
     html.find("[data-action='roll-save']").on("click", async (e) => {
       const actor = game.user?.character;
       if (!actor) return;
-      await actor.rollSavingThrow(e.currentTarget.dataset.ability, { event: e });
+      await actor.rollSavingThrow(e.currentTarget.dataset.ability, {
+        event: e,
+      });
     });
 
     html.find("[data-action='roll-skill']").on("click", async (e) => {
@@ -410,9 +408,9 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
     // ── Chat ─────────────────────────────────────────────────────────────────
     const chatInput = html.find(".nsv-chat-input")[0];
 
-    html.find("[data-action='chat-send']").on("click", () =>
-      this._sendChat(chatInput)
-    );
+    html
+      .find("[data-action='chat-send']")
+      .on("click", () => this._sendChat(chatInput));
 
     html.find(".nsv-chat-input").on("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
@@ -451,7 +449,8 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     if (tab === "chat") {
       const chatLog = html.find(".nsv-chat-log")[0];
-      if (chatLog) setTimeout(() => (chatLog.scrollTop = chatLog.scrollHeight), 50);
+      if (chatLog)
+        setTimeout(() => (chatLog.scrollTop = chatLog.scrollHeight), 50);
     }
   }
 
@@ -656,9 +655,9 @@ class NotSoVirtualApp extends HandlebarsApplicationMixin(ApplicationV2) {
           </div>
           ${m.flavor ? `<div class="nsv-message-flavor">${m.flavor}</div>` : ""}
           <div class="nsv-message-content">${m.content}</div>
-        </div>`
+        </div>`,
         )
-        .join("")
+        .join(""),
     );
 
     chatLog[0].scrollTop = chatLog[0].scrollHeight;
@@ -726,7 +725,9 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   if (!isMobileDevice()) {
-    console.log("Not So Virtual | Non-mobile device detected — module inactive");
+    console.log(
+      "Not So Virtual | Non-mobile device detected — module inactive",
+    );
     return;
   }
 
